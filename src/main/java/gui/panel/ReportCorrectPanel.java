@@ -1,5 +1,6 @@
 package gui.panel;
 
+import gui.listener.ReportCorrectListener;
 import service.Sources;
 import util.CenterPanel;
 import util.GUIUtil;
@@ -143,6 +144,10 @@ public class ReportCorrectPanel extends JPanel {
             }
         }
     }
+    public void addListener(){
+        ReportCorrectListener rcl = new ReportCorrectListener();
+        this.submit.addActionListener(rcl);
+    }
     public TreeSelectionListener getListener(){
         return new TreeSelectionListener() {
             @Override
@@ -214,6 +219,8 @@ public class ReportCorrectPanel extends JPanel {
         jPanel.setPreferredSize(new Dimension(panelWidth/6,panelHeigth/6));
         Dimension dimension = new Dimension(panelWidth/300,panelHeigth/24);
         nextReport.setPreferredSize(dimension);
+
+        addListener();
 
 
 
