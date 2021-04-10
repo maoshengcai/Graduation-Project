@@ -32,12 +32,12 @@ public class Sources {
         try(FileWriter fWriter = new FileWriter(fileName,true);
             BufferedWriter writer = new BufferedWriter(fWriter)){
             Iterator<String> iterator = nowCorrected.iterator();
-            String str = iterator.next();
+            String str ;
             for(;iterator.hasNext();){
+                str = iterator.next();
                 writer.write(str);
                 writer.newLine();
                 writer.flush();
-                str = iterator.next();
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -46,5 +46,9 @@ public class Sources {
     public static void initSources(){
         String fileName = "src/correctedReport.txt";
         getCorrectedReport(fileName);
+    }
+    public static void saveSources(){
+        String fileName = "src/correctedReport.txt";
+        setCorrectedReport(fileName);
     }
 }

@@ -1,5 +1,6 @@
 package gui.panel;
 
+import dao.GradeDao;
 import gui.listener.ReportCorrectListener;
 import service.Sources;
 import util.CenterPanel;
@@ -14,6 +15,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class ReportCorrectPanel extends JPanel {
@@ -54,6 +56,43 @@ public class ReportCorrectPanel extends JPanel {
     public JLabel warningL = new JLabel();
 
 
+    //获取面板中输入成绩,返回一个列表
+    public ArrayList<GradeDao> getGrades(){
+        ArrayList<GradeDao> result = new ArrayList<>();
+        String project_name = "experiment"+label2.getText();
+        String[] strs = new String[]{labelStu1.getText(),labelStu2.getText(),labelStu3.getText(),labelStu4.getText()};
+        String[] vals  = new String[]{jTextStu1.getText(),jTextStu2.getText(),jTextStu3.getText(),jTextStu4.getText()};
+        int allGrade = 0;
+        if(jTextGrade.getText().equals("")){
+            JOptionPane.showMessageDialog(instance,"报告成绩不能为空！");
+            return null;
+        }else{
+            allGrade = Integer.valueOf(jTextGrade.getText());
+            if(allGrade<0 || allGrade>100){
+                JOptionPane.showMessageDialog(instance,"成绩只能是大于0小于100的整数！");
+                return null;
+            }
+        }
+        for(int i= 0;i < strs.length;i++){
+            System.out.println("string    "+strs[i]);
+            if(strs[i].equals("")){
+
+                break;
+            }
+            int val = allGrade;
+            if(!vals[i].equals("")){
+                val = Integer.valueOf(vals[i]);
+                if(val <0 || val >100){
+                    JOptionPane.showMessageDialog(instance,"成绩只能是大于0小于100的整数！");
+                    return null;
+                }
+            }
+            GradeDao grade = new GradeDao(project_name,strs[i],val);
+            result.add(grade);
+        }
+
+        return result;
+    }
     //生成文件树结构
     public static void produceTree(String filePath, DefaultMutableTreeNode pNode){
 
@@ -68,7 +107,6 @@ public class ReportCorrectPanel extends JPanel {
                 if(new File(strPath).isDirectory()){
                     test = false;
                     produceTree(strPath,node);
-
                 }
             }
             if(test){
@@ -131,22 +169,26 @@ public class ReportCorrectPanel extends JPanel {
             path = file.getParent();
             String[] strs = path.split("[\\\\]");
             path = String.join("/",strs);
+            file = new File(path);
         }
         System.out.println("setReportList"+path);
+
         if(file.isDirectory()){
             String[] fileStrs = file.list();
             for(int i = 0;i< fileStrs.length;i++){
                 String str = fileStrs[i];
+                str = path+"/"+str;
                 if(str.endsWith(".pdf")&&(!correctedList.contains(str))){
-                    str = path+"/"+str;
                     reportList.add(str);
                 }
             }
         }
+
     }
     public void addListener(){
         ReportCorrectListener rcl = new ReportCorrectListener();
         this.submit.addActionListener(rcl);
+        this.nextReport.addActionListener(rcl);
     }
     public TreeSelectionListener getListener(){
         return new TreeSelectionListener() {
@@ -161,17 +203,22 @@ public class ReportCorrectPanel extends JPanel {
                 for(int i = 1;i<object.length;i++){
                     str = str + "/"+object[i].toString();
                 }
-                setImageShow(str);
-//                setReportList(str);
-//                if(!reportList.isEmpty()){
-//                    if(reportList.contains(str)){
-//                        setImageShow(str);
-//                    }else{
-//                        //提示该报告已批改过
-//
-//                    }
-//
-//                }
+                setReportList(str);
+                System.out.println("所有未批改报告：");
+                reportList.stream().forEach(System.out::println);
+                if(!reportList.isEmpty()){
+                    if(new File(str).isDirectory()){
+                        str = reportList.get(0);
+                    }
+                    if(reportList.contains(str)){
+                        setImageShow(str);
+                    }else{
+                        //提示该报告已批改过
+                        JOptionPane.showMessageDialog(instance,"该报告已经被批改！");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(instance,"该目录中所有报告已被批改！");
+                }
 
             }
         };
@@ -200,7 +247,7 @@ public class ReportCorrectPanel extends JPanel {
         this.add(this.centerPanel,"Center");
         //east
         jPanel = new JPanel();
-        jPanel.setLayout(new GridLayout(15,2));
+        jPanel.setLayout(new GridLayout(20,2));
         jPanel.add(label1);jPanel.add(label2);
 //        jPanel.add(label3);jPanel.add(label4);
         jPanel.add(labelStu1);jPanel.add(jTextStu1);
@@ -229,8 +276,10 @@ public class ReportCorrectPanel extends JPanel {
         instance = new ReportCorrectPanel();
     }
     public static void main(String[] args){
-        instance.setVisible(true);
-        GUIUtil.showPanel(instance,1.0D);
+//        instance.setVisible(true);
+//        GUIUtil.showPanel(instance,1.0D);
+        String str = "";
+        System.out.println(Integer.valueOf(null));
     }
 
 
