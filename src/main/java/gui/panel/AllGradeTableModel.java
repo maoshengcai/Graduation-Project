@@ -22,9 +22,17 @@ public class AllGradeTableModel extends AbstractTableModel {
     }
 
     @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        super.setValueAt(aValue, rowIndex, columnIndex);
+        if(columnIndex == columnNames.length-1){
+            System.out.println("setValueTable:  "+String.valueOf(aValue));
+        }
+    }
+
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         boolean flag = false;
-        if(columnIndex >= 3){
+        if(columnIndex == (columnNames.length-1)){
             flag = true;
         }
         return flag;
@@ -54,4 +62,5 @@ public class AllGradeTableModel extends AbstractTableModel {
 
         return result;
     }
+
 }

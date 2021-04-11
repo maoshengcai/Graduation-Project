@@ -13,10 +13,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class AllGradePanel extends JPanel {
     public static AllGradePanel instance ;
@@ -24,7 +21,7 @@ public class AllGradePanel extends JPanel {
     public JPanel jp=new JPanel();
     public JLabel warningL = new JLabel("各项目成绩占比");
     public JPanel jp_input = new JPanel();
-    public Map<JLabel,JTextField> inputG = new HashMap<>();
+    public Map<JLabel,JTextField> inputG = new LinkedHashMap<>();
     public JButton calculateB=new JButton("计算");
 
     public JPanel jp_out = new JPanel();
@@ -77,6 +74,8 @@ public class AllGradePanel extends JPanel {
                 return null;
             }
         });
+        file_ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        file_ch.setDialogTitle("选取文件目录");
         jp_out.add(label_out);
         jp_out.add(text_out);
         jp_out.add(fcB);
@@ -112,6 +111,8 @@ public class AllGradePanel extends JPanel {
         sp.setViewportView(jTable);
         this.add(centerPanel,BorderLayout.CENTER);
         centerPanel.show(sp);
+
+        addListener();
 
     }
     static {
