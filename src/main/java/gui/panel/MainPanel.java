@@ -68,6 +68,7 @@ public class MainPanel extends JPanel{
         this.jFileUpload.addActionListener(listener);
         this.jReportCorrect.addActionListener(listener);
         this.jRegularGrade.addActionListener(listener);
+        this.jAllGrade.addActionListener(listener);
 //        this.bFtpDownload.addActionListener(listener);
 //        this.bFtpUpload.addActionListener(listener);
     }

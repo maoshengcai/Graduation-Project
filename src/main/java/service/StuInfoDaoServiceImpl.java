@@ -69,13 +69,22 @@ public class StuInfoDaoServiceImpl implements StuInfoDaoService{
     @Override
     public HashSet<StuInfoDao> getAllStuIfo(String className, String academyName) {
         String sql = "select * from stuinfo where  academy = ? and number like ?";
+        if(academyName.equals("")){
+            sql = "select * from stuinfo where  number like ?";
+        }
+
         className = className+"%";
         HashSet<StuInfoDao> result = new HashSet<>();
         try(Connection conn = DBUtil.getConnection();
             PreparedStatement pst = conn.prepareStatement(sql);
         ){
-            pst.setString(1,academyName);
-            pst.setString(2,className);
+            if(academyName.equals("")){
+                pst.setString(1,className);
+            }else{
+                pst.setString(1,academyName);
+                pst.setString(2,className);
+            }
+
             ResultSet resultSet = pst.executeQuery();
             while(resultSet.next()){
                 StuInfoDao tmp = new StuInfoDao(resultSet.getString("number"),resultSet.getString("name"),resultSet.getString("academy"));
@@ -95,7 +104,7 @@ public class StuInfoDaoServiceImpl implements StuInfoDaoService{
         HashSet<String> re = new StuInfoDaoServiceImpl().getAllAcademy();
         re.stream().forEach(System.out::println);
 
-        HashSet<StuInfoDao> sd = new StuInfoDaoServiceImpl().getAllStuIfo("2017","智科");
+        HashSet<StuInfoDao> sd = new StuInfoDaoServiceImpl().getAllStuIfo("","");
         sd.stream().forEach(System.out::println);
     }
 }

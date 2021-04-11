@@ -61,11 +61,32 @@ public class GradeDaoServiceImpl implements GradeDaoService{
         return flag;
     }
 
+    @Override
+    public int selectOneGrade(String stu_number, String project_name) {
+        String sql= "select * from grade g,project p where g.student_id = ? and p.name = ? and g.project_id = p.id";
+        int result = -1;
+        ResultSet resultSet;
+        try(Connection conn = DBUtil.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql);
+        ){
+            pst.setString(1,stu_number);
+            pst.setString(2,project_name);
+            resultSet = pst.executeQuery();
+            if(resultSet.next()){
+                result = resultSet.getInt("grade");
+            }
+            resultSet.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return result;
+    }
+
 
     public static void main(String[] args){
 //        GradeDao gradeDao = new GradeDao("experiment01","2017051712",100);
 //        new GradeDaoServiceImpl().addOneGrade(gradeDao);
-        boolean flag = new GradeDaoServiceImpl().checkOneGrade("2017051712","experiment01");
+        int flag = new GradeDaoServiceImpl().selectOneGrade("2017051712","experiment05");
         System.out.println(flag);
     }
 }

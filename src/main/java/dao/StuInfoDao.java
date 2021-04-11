@@ -10,6 +10,9 @@ public class StuInfoDao {
         this.name = name;
         this.academy = academy;
     }
+    public StuInfoDao(){
+
+    }
 
     @Override
     public String toString() {

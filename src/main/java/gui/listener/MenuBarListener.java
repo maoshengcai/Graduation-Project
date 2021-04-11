@@ -116,5 +116,10 @@ public class MenuBarListener implements ActionListener {
             academys.stream().forEach(rgp.cb_academy::addItem);
             p.jPanel.show(rgp);
         }
+
+        if(b == p.jAllGrade){
+            AllGradePanel agp = AllGradePanel.instance;
+            p.jPanel.show(agp);
+        }
     }
 }

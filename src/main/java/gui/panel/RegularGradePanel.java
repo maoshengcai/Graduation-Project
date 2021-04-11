@@ -1,10 +1,20 @@
 package gui.panel;
 
+import gui.listener.RegularGradeListener;
 import util.CenterPanel;
 import util.GUIUtil;
 
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 public class RegularGradePanel extends JPanel {
     public static RegularGradePanel instance ;
@@ -23,6 +33,14 @@ public class RegularGradePanel extends JPanel {
     public JScrollPane sp = new JScrollPane();
     public JTable jTable;
     public RegularTableModel rTModel;
+    public CenterPanel centerPanel = new CenterPanel(1.0D);
+
+    public void addListener(){
+        RegularGradeListener rgl = new RegularGradeListener();
+        this.searchB.addActionListener(rgl);
+        this.saveB.addActionListener(rgl);
+        this.cancelB.addActionListener(rgl);
+    }
 
     private RegularGradePanel(){
         this.setLayout(new BorderLayout());
@@ -45,8 +63,66 @@ public class RegularGradePanel extends JPanel {
 
         rTModel = new RegularTableModel();
         jTable = new JTable(rTModel);
+        jTable.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+//                System.out.println("lost focus");
+//                System.out.println(String.valueOf(e.getSource()));
+//
+//                jTable.getCellEditor().stopCellEditing();
+            }
+        });
+        jTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+
+                if(instance.jTable.getEditingRow() != -1){
+                    System.out.println("mouseClick  close editor:"+instance.jTable.getCellEditor().stopCellEditing());
+
+
+                }
+                super.mouseClicked(e);
+
+            }
+        });
+        jTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                System.out.println("in listener");
+                int row = e.getLastIndex();
+                int column = 3;
+                int row_first = e.getFirstIndex();
+                int row_real = jTable.getSelectedRow();
+                if(row_real != row){
+                    row_first = row;
+                    row = row_real;
+                }
+                System.out.println("row = "+row +"  "+"row_first:"+row_first);
+                String str = String.valueOf(jTable.getValueAt(row_first,3));
+                if(!str.equals("null")){
+                    int num = Integer.valueOf(str);
+                    System.out.println("num ="+String.valueOf(str));
+                    if(num >100 || num < 0){
+                        JOptionPane.showMessageDialog(instance,"平时成绩不能小于0或大于100！");
+                        jTable.editCellAt(row_first,3);
+                        jTable.changeSelection(row_first,3,false,false);
+                        return;
+                    }
+                }
+                System.out.println("in editor");
+                jTable.editCellAt(row,3);
+            }
+        });
         sp.setViewportView(jTable);
-        this.add(sp,BorderLayout.CENTER);
+        this.add(centerPanel,BorderLayout.CENTER);
+        centerPanel.show(sp);
+        addListener();
 
     }
     static {
