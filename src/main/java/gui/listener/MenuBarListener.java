@@ -2,6 +2,10 @@ package gui.listener;
 
 import dao.FtpDao;
 import gui.panel.*;
+import service.GradeDaoService;
+import service.GradeDaoServiceImpl;
+import service.StuInfoDaoService;
+import service.StuInfoDaoServiceImpl;
 import util.FtpUtil;
 import util.PropertiesUtil;
 
@@ -11,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Properties;
 
 public class MenuBarListener implements ActionListener {
@@ -97,7 +102,19 @@ public class MenuBarListener implements ActionListener {
         }
 
         if(b == p.jRegularGrade){
-            p.jPanel.show(RegularGradePanel.instance);
+            RegularGradePanel rgp = RegularGradePanel.instance;
+            StuInfoDaoService stuInfoDaoService = new StuInfoDaoServiceImpl();
+            //重置所有选项
+            rgp.cb_class.removeAllItems();
+            rgp.cb_academy.removeAllItems();
+            //获取所有年级和学院
+            HashSet<String> classes = stuInfoDaoService.getAllClass();
+            HashSet<String> academys = stuInfoDaoService.getAllAcademy();
+            rgp.cb_class.addItem("");
+            rgp.cb_academy.addItem("");
+            classes.stream().forEach(rgp.cb_class::addItem);
+            academys.stream().forEach(rgp.cb_academy::addItem);
+            p.jPanel.show(rgp);
         }
     }
 }
