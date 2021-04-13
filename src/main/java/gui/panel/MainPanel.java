@@ -23,6 +23,7 @@ public class MainPanel extends JPanel{
     public JMenu  mAllGrade=new JMenu("总成绩");
     public JMenu  mSettings=new JMenu("设置");
 
+    public JMenuItem jStuInfoGet = new JMenuItem("学生信息录入");
     public JMenuItem jFileDownload=new JMenuItem("文件下载");
     public JMenuItem jFileUpload=new JMenuItem("文件上传");
     public JMenuItem jReportCorrect=new JMenuItem("实验报告批改");
@@ -40,6 +41,7 @@ public class MainPanel extends JPanel{
 //        tb.add(bRegularGrade);
 //        tb.add(bAllGrade);
 
+        mFile.add(jStuInfoGet);
         mFile.add(jFileDownload);
         mFile.add(jFileUpload);
         mCorrect.add(jReportCorrect);
@@ -69,6 +71,7 @@ public class MainPanel extends JPanel{
         this.jReportCorrect.addActionListener(listener);
         this.jRegularGrade.addActionListener(listener);
         this.jAllGrade.addActionListener(listener);
+        this.jStuInfoGet.addActionListener(listener);
 //        this.bFtpDownload.addActionListener(listener);
 //        this.bFtpUpload.addActionListener(listener);
     }

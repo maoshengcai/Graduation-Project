@@ -121,5 +121,8 @@ public class MenuBarListener implements ActionListener {
             AllGradePanel agp = AllGradePanel.instance;
             p.jPanel.show(agp);
         }
+        if(b == p.jStuInfoGet){
+            p.jPanel.show(StudentGetPanel.instance);
+        }
     }
 }

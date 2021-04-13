@@ -114,6 +114,7 @@ public class AllGradeListener implements ActionListener {
                 }
             }
             System.out.println("录入成功 ： "+flag);
+            JOptionPane.showMessageDialog(agp,"保存成功！");
             //将面板中数据导出为excel表格并保存到所选路径中
 
             try {
@@ -121,7 +122,7 @@ public class AllGradeListener implements ActionListener {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-            JOptionPane.showMessageDialog(agp,"保存成功！");
+            JOptionPane.showMessageDialog(agp,"导出成功！");
             System.out.println("成功！！！！");
         }
 

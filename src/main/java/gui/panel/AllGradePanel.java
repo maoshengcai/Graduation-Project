@@ -99,12 +99,13 @@ public class AllGradePanel extends JPanel {
         for(int i = 0;i < aTModel.data.size();i++){
             student = aTModel.data.get(i);
             Integer[] arr_grade = new Integer[7];
-            for(int j = 0;j < 6;j++){
+            for(int j = 0;j < 7;j++){
                 project_name = aTModel.columnNames[3+j];
                 arr_grade[j] = gradeDaoService.selectOneGrade(student.getNumber(),project_name);
-                if(arr_grade[j] == -1)arr_grade[j] = 0;
+                if(arr_grade[j] == -1 && j!= 6){
+                    arr_grade[j] = 0;
+                }
             }
-            arr_grade[6] = -1;
             aTModel.grades.add(arr_grade);
         }
         jTable = new JTable(aTModel);
