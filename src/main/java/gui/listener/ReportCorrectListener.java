@@ -21,38 +21,48 @@ public class ReportCorrectListener implements ActionListener {
         ReportCorrectPanel rcl = ReportCorrectPanel.instance;
         JButton jb = (JButton) e.getSource();
         rcl.warningL.setText("");
-        if(jb == rcl.submit){
-            boolean flag = true;
-            LinkedList<GradeDao> gradeDao_test= new LinkedList<>();
-            //获得实验名和对应学号的成绩，提交数据库
-            GradeDaoService gradeDaoService=new GradeDaoServiceImpl();
-            ArrayList<GradeDao> grades = rcl.getGrades();
-            if(grades == null){
-                return;
-            }
-            Iterator<GradeDao> iterator = grades.iterator();
-            for(;iterator.hasNext();){
-                GradeDao gradeDao = iterator.next();
-                if(!gradeDaoService.addOneGrade(gradeDao)){
-                    flag = false;
-                    gradeDao_test.add(gradeDao);
-                }
-            }
-            //提交成功，更改文档，将该文件路径加入已批改报告列表中
-            //设置提示，重新显示报告
-            if(flag){
-                rcl.reportList.remove(rcl.currentFilePath);
-                Sources.nowCorrected.add(rcl.currentFilePath);
-                Sources.correctedReport.add(rcl.currentFilePath);
 
-                int grade = Integer.parseInt(rcl.jTextGrade.getText());
-                new ReportService().setGradeInPdf(rcl.currentFilePath,grade);
-                rcl.setImageShow(rcl.currentFilePath);
-                rcl.warningL.setText("提交成功！");
-            }else{
-                String warnStr = "提交失败！有学生该实验成绩已经存在";
-                rcl.warningL.setText(warnStr);
-            }
+        if(jb == rcl.submit){
+            SwingWorker<Void,Void> worker= new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+
+                    boolean flag = true;
+                    LinkedList<GradeDao> gradeDao_test= new LinkedList<>();
+                    //获得实验名和对应学号的成绩，提交数据库
+                    GradeDaoService gradeDaoService=new GradeDaoServiceImpl();
+                    ArrayList<GradeDao> grades = rcl.getGrades();
+                    if(grades == null){
+                        return null;
+                    }
+                    Iterator<GradeDao> iterator = grades.iterator();
+                    for(;iterator.hasNext();){
+                        GradeDao gradeDao = iterator.next();
+                        if(!gradeDaoService.addOneGrade(gradeDao)){
+                            flag = false;
+                            gradeDao_test.add(gradeDao);
+                        }
+                    }
+                    //提交成功，更改文档，将该文件路径加入已批改报告列表中
+                    //设置提示，重新显示报告
+                    if(flag){
+                        rcl.reportList.remove(rcl.currentFilePath);
+                        Sources.nowCorrected.add(rcl.currentFilePath);
+                        Sources.correctedReport.add(rcl.currentFilePath);
+
+                        int grade = Integer.parseInt(rcl.jTextGrade.getText());
+                        new ReportService().setGradeInPdf(rcl.currentFilePath,grade);
+                        rcl.setImageShow(rcl.currentFilePath);
+                        rcl.warningL.setText("提交成功！");
+                    }else{
+                        String warnStr = "提交失败！有学生该实验成绩已经存在";
+                        rcl.warningL.setText(warnStr);
+                    }
+                    return null;
+                }
+            };
+            worker.execute();
+
 
         }
 

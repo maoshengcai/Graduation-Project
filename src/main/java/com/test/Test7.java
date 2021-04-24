@@ -1,69 +1,64 @@
 package com.test;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Test7 {
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+public class Test7 extends JPanel implements ActionListener{
+    private static final long serialVersionUID = 1L;
+    private JLabel label2;
+
+    public Test7() {
+        super(new GridLayout(2,1));
+        JButton b1 = new JButton("click me");
+        b1.addActionListener(this);
+        label2 = new JLabel("Label");
+        add(label2);
+        add(b1);
+    }
+
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame("LabelDemo");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new Test7());
+        frame.pack();
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
 
-        JFrame f = new JFrame("LoL");
-        f.setSize(400, 300);
-        f.setLocation(200, 200);
-
-        f.setLayout(null);
-
-        JPanel p1 = new JPanel();
-        p1.setBounds(50, 50, 300, 60);
-
-        p1.setBackground(Color.RED);
-
-        p1.setLayout(new FlowLayout());
-
-        JButton b1 = new JButton("英雄1");
-        JButton b2 = new JButton("英雄2");
-        JButton b3 = new JButton("英雄3");
-
-        p1.add(b1);
-        p1.add(b2);
-        p1.add(b3);
-
-//        JPanel p2 = new JPanel();
-//        JButton b4 = new JButton("英雄4");
-//        JButton b5 = new JButton("英雄5");
-//        JButton b6 = new JButton("英雄6");
-//
-//        p2.add(b4);
-//        p2.add(b5);
-//        p2.add(b6);
-//
-//        p2.setBackground(Color.BLUE);
-//        p2.setBounds(10, 150, 300, 60);
-        JTextArea ta = new JTextArea();
-        for (int i = 0; i < 1000; i++) {
-            ta.append(String.valueOf(i));
-        }
-        ta.setLineWrap(true);
-
-        JScrollPane sp = new JScrollPane();
-        sp.setViewportView(ta);
-
-
-        JTabbedPane tp = new JTabbedPane();
-        tp.add(p1);
-        tp.add(sp);
-
-        // 设置tab的标题
-        tp.setTitleAt(0, "红色tab");
-        tp.setTitleAt(1, "蓝色tab");
-
-//        ImageIcon i = new ImageIcon("G:/毕设/picture/hero.png");
-//        tp.setIconAt(0,i );
-//        tp.setIconAt(1,i );
-
-        f.setContentPane(tp);
-
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        f.setVisible(true);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                for(int i = 0 ; i < 10 ; i ++){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {}
+                    final int x =i;
+                    SwingUtilities.invokeLater(new Runnable(){
+                        @Override
+                        public void run() {
+                            label2.setText(x + "");
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 }
+
+

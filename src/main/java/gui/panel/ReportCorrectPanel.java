@@ -211,7 +211,15 @@ public class ReportCorrectPanel extends JPanel {
                         str = reportList.get(0);
                     }
                     if(reportList.contains(str)){
-                        setImageShow(str);
+                        final  String str_copy = str;
+                        SwingWorker<Void,Void> worker = new SwingWorker<Void, Void>() {
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                setImageShow(str_copy);
+                                return null;
+                            }
+                        };
+                        worker.execute();
                     }else{
                         //提示该报告已批改过
                         JOptionPane.showMessageDialog(instance,"该报告已经被批改！");

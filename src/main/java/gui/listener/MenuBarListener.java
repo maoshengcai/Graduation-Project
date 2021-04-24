@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Properties;
 
 public class MenuBarListener implements ActionListener {
+    public boolean flag;
     public MenuBarListener(){
 
     }
@@ -37,58 +38,81 @@ public class MenuBarListener implements ActionListener {
             System.out.println("in jFileDownload Listener");
             FileDownAndUpPanel dup = FileDownAndUpPanel.instance;
             dup.warningT.setText("下载中......");
-            boolean bool = false;
+
+            p.jPanel.show(dup);
+
+            flag = true;
             Properties properties= PropertiesUtil.getProperties("src/ftp.properties");
             FtpDao ftpDao=new FtpDao(properties,true);
             String localDownload = properties.getProperty("ftp.localDownPath");
+            System.out.println("下载中......"+localDownload);
+            SwingWorker<Void,Void> worker = new SwingWorker<Void,Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    try {
+                        flag = FtpUtil.startDown(ftpDao, localDownload, ftpDao.getPath());
+                        FtpUtil.closeFtp();
+                    } catch (Exception exception) {
+//                exception.printStackTrace();
+                        flag=false;
+//                        Thread.sleep(100);
+                        dup.warningT.setText("下载失败!");
+                        dup.warningT.setForeground(Color.RED);
+                    }
+                    System.out.println("执行这个SwingWorder的线程是：" + Thread.currentThread().getName()+"flag = "+flag);
+                    if (flag) {
+                        dup.warningT.setText("下载成功!");
 
-            try {
-                bool = FtpUtil.startDown(ftpDao, localDownload, ftpDao.getPath());
-                FtpUtil.closeFtp();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                dup.warningT.setText("下载失败!");
-                dup.warningT.setForeground(Color.RED);
-            }
-            if (bool) {
-                dup.warningT.setText("下载成功!");
+                    } else {
+                        dup.warningT.setText("下载失败!");
+                        dup.warningT.setForeground(Color.RED);
+                    }
+                    return null;
 
-            } else {
-                dup.warningT.setText("下载失败!");
-                dup.warningT.setForeground(Color.RED);
-            }
+                }
+            };
+            worker.execute();
+
             p.jPanel.show(dup);
         }
 
         if(b == p.jFileUpload){
             FileDownAndUpPanel dup = FileDownAndUpPanel.instance;
-            dup.warningT.setText("下载中......");
-            boolean bool = false;
+            dup.warningT.setText("上传中......");
+            p.jPanel.show(dup);
+            flag = true;
             Properties properties= PropertiesUtil.getProperties("src/ftp.properties");
             FtpDao ftpDao=new FtpDao(properties,false);
             String localUp = properties.getProperty("ftp.localUpPath");
-            File file=new File(localUp);
-            if(file.exists()) {
-                try {
-                    bool = FtpUtil.connectFtp(ftpDao);
-                    FtpUtil.upload(file);
-                    FtpUtil.closeFtp();
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    dup.warningT.setText("上传失败!");
-                    dup.warningT.setForeground(Color.RED);
+            SwingWorker<Void,Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    File file=new File(localUp);
+                    if(file.exists()) {
+                        try {
+                            flag = FtpUtil.connectFtp(ftpDao);
+                            FtpUtil.upload(file);
+                            FtpUtil.closeFtp();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                            flag = false;
+                            dup.warningT.setText("上传失败!");
+                            dup.warningT.setForeground(Color.RED);
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(dup, "本地文件为空！");
+                    }
+                    if (flag) {
+                        dup.warningT.setText("上传成功!");
+
+                    } else {
+                        dup.warningT.setText("上传失败!");
+                        dup.warningT.setForeground(Color.RED);
+                    }
+                    return null;
                 }
-            }else{
-                JOptionPane.showMessageDialog(dup, "本地文件为空！");
-            }
-            if (bool) {
-                dup.warningT.setText("上传成功!");
-
-            } else {
-                dup.warningT.setText("上传失败!");
-                dup.warningT.setForeground(Color.RED);
-            }
-
+            };
+            worker.execute();
             p.jPanel.show(dup);
         }
 

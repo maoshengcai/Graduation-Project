@@ -3,7 +3,7 @@ package gui.panel;
 import javax.swing.*;
 
 public class FileDownAndUpPanel extends JPanel {
-    public static FileDownAndUpPanel instance = null;
+    public static FileDownAndUpPanel instance ;
     public JLabel warningT;
     private FileDownAndUpPanel(){
         warningT = new JLabel("");
